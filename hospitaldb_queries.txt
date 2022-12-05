@@ -1,0 +1,30 @@
+1) List all the doctors RICHARD MILLER is consulting.
+	SELECT D_name FROM DOCTORS WHERE D_ID IN (SELECT D_ID FROM P_ASSIGNMENT WHERE P_ID IN (SELECT P_ID FROM PATIENTS WHERE P_NAME='RICHARD MILLER'));
+ 
+2) Find all the test results of cancer patients. (Note: There may be different type of cancer)
+	SELECT t_result, p_name, p_disease FROM TESTS, PATIENTS WHERE CAST(TESTS.P_ID AS INT) = CAST(PATIENTS.P_ID AS INT) AND p_disease LIKE '%Cancer%';
+ 
+3) List all the instruments produced by a manufacturer whose name starts with "S".
+	SELECT I_NAME FROM INSTRUMENTS WHERE I_MANUFACTURER LIKE 'S%';
+ 
+4) Find the most experienced doctor in the hospital.
+	SELECT d_name,MAX(CAST(d_years_of_experience AS int)) AS d_years_of_experience FROM DOCTORS;
+ 
+5) List all the patients of doctor JAMES SMITH who live in the same street and same city as him.
+	SELECT p_name FROM PATIENTS WHERE (p_id IN (SELECT p_id FROM PATIENTS WHERE p_city = (SELECT d_city FROM DOCTORS WHERE d_name = 'JAMES SMITH') AND p_street = (SELECT d_street FROM DOCTORS WHERE d_name = 'JAMES SMITH'))) AND PATIENTS.P_ID = (SELECT p_id FROM P_ASSIGNMENT WHERE d_id IN (SELECT d_id FROM DOCTORS WHERE d_name = 'JAMES SMITH'));
+ 
+6) Find the nurses who assist at least two doctors. Display nurse name and the number of doctors he/she is assisting
+	SELECT n_name, COUNT(*) AS num_doctors FROM N_ASSISTS,NURSES WHERE N_ASSISTS.N_ID = NURSES.N_ID GROUP BY N_ASSISTS.N_ID HAVING COUNT(*) > 1;
+ 
+7) List the doctors and the number of nurses they have in the descending order of their number.
+	SELECT DISTINCT d_name, COUNT(*) AS num_nurses FROM DOCTORS JOIN N_ASSISTS ON DOCTORS.D_ID = N_ASSISTS.d_id GROUP BY DOCTORS.d_id ORDER BY num_nurses DESC;
+ 
+8) Find all the nurses who are not assigned to any doctors.
+	SELECT NURSES.n_name FROM NURSES LEFT JOIN N_ASSISTS ON NURSES.n_id = N_ASSISTS.N_ID WHERE N_ASSISTS.n_id IS NULL;
+ 
+9) Increment years of experience of all the female doctors by 5.
+	UPDATE DOCTORS SET d_years_of_experience = d_years_of_experience + 5 WHERE d_gender = 'f';
+ 
+10) Delete all the tests whose result is negative.
+	DELETE FROM TESTS WHERE t_result = 'Negative';
+ 
